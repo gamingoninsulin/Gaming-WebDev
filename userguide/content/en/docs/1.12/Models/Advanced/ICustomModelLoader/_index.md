@@ -1,0 +1,16 @@
+---
+linkTitle: ICustomModelLoader
+---
+
+<article class="docs-entry">
+<h1 id="icustommodelloader"><code>ICustomModelLoader</code><a class="headerlink" href="#icustommodelloader" title="Permanent link"> </a></h1>
+<p>Recall that when a model is requested for a <code>ModelResourceLocation</code>, every <code>ICustomModelLoader</code> is queried to find the one that volunteers to load the model from the <code>ModelResourceLocation</code>. In order to actually use a custom implementation of <a href="../imodel/index.htm"><code>IModel</code></a>, whether it be a full blown model format like OBJ models or a completely in-code model generator like <code>ModelDynBucket</code>, it must be done through an <code>ICustomModelLoader</code>. Even though it has &ldquo;loader&rdquo; in the name, there is no need for it to actually load anything; for in-code models like <code>ModelDynBucket</code>, the <code>ICustomModelLoader</code> will normally be a dummy that just instantiates the <code>IModel</code> without touching any files.</p>
+<p>If multiple <code>ICustomModelLoader</code>s attempt to load the same <code>ResourceLocation</code>, the game will crash with a <code>LoaderException</code>. Therefore, care must be taken to keep the namespace of an <code>ICustomModelLoader</code> safe from being infringed upon. The Forge OBJ and B3D loaders do so by requiring that the namespace of a <code>ResourceLocation</code> be registered to them beforehand, and they only match <code>ResourceLocation</code>s with the appropriate file extension.</p>
+<p>In order for an <code>ICustomModelLoader</code> to actually be used, it must be registered with <code>ModelLoaderRegistry.registerLoader</code>.</p>
+<h3 id="accepts"><code>accepts</code><a class="headerlink" href="#accepts" title="Permanent link"> </a></h3>
+<p>Tests whether this <code>ICustomModelLoader</code> is willing to load the given <code>ResourceLocation</code>. Preferably, this should be based on the <code>ResourceLocation</code> alone and not on the file contents. If two <code>ICustomModelLoader</code>s accept the same <code>ResourceLocation</code>, a <code>LoaderException</code> is thrown. Therefore, care should be taken to make sure that the namespace of the <code>ICustomModelLoader</code> is unique enough to avoid collisions.</p>
+<h3 id="loadmodel"><code>loadModel</code><a class="headerlink" href="#loadmodel" title="Permanent link"> </a></h3>
+<p>Get the model for the given <code>ResourceLocation</code>. Note that it doesn&rsquo;t need to &ldquo;load&rdquo; anything. For example, completely in-code models will simply instantiate the <code>IModel</code> class and totally ignore the file.</p>
+<h3 id="onresourcemanagerreload"><code>onResourceManagerReload</code><a class="headerlink" href="#onresourcemanagerreload" title="Permanent link"> </a></h3>
+<p>Called whenever the resource packs are (re)loaded. In this method, any caches the <code>ICustomModelLoader</code> keeps should be dumped. Following this, <code>loadModel</code> will be called again to reload all the <code>IModel</code>s, so if the <em><code>IModel</code>s</em> kept some caches in themselves, they do not need to be cleared.</p>
+</article>

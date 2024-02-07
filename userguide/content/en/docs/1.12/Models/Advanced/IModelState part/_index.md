@@ -1,0 +1,10 @@
+---
+linkTitle: IModelState Part
+---
+
+<article class="docs-entry">
+<h1 id="imodelstate-and-imodelpart"><code>IModelState</code> and <code>IModelPart</code><a class="headerlink" href="#imodelstate-and-imodelpart" title="Permanent link"> </a></h1>
+<p><code>IModelState</code> and <code>IModelPart</code> are a way to transform models (or parts thereof). An <code>IModelPart</code> represents the part of the model being transformed. An <code>IModelState</code> represents a function <code>IModelPart</code> → <code>TRSRTransform</code>. By applying the <code>IModelState</code> to an <code>IModelPart</code>, we get a <code>TRSRTransform</code> representing how to transform that part. Note that passing <code>Optional.absent()</code> to <code>IModelState::apply</code> has a different meaning than usual. Doing so means getting the transform for the <em>entire</em> model, instead of just a part of it.</p>
+<p>One of the uses of this is animation. An <code>IModelState</code> can represent a certain frame of the animation and supply transforms to turn the original model into the current frame. By supplying different <code>IModelState</code>s over time, an animation can be performed. For example, the B3D model format supports this kind of animation directly through its nodes; however, the animation system is still WIP. Another, more common use case is Forge blockstate JSONs. The models within the blockstates can be transformed with <code>transform</code> tags, which translate into simple <code>IModelState</code>s that are passed into the contained models. Finally, another use case is <a href="#">perspective aware models</a>.</p>
+<p>Which <code>IModelPart</code>s a certain model will use is dependent on the model itself. If I had a <code>B3DState</code> that dealt with B3D <code>NodeJoint</code>s and tried to use it on a vanilla JSON model, it wouldn&rsquo;t work as vanilla models have no idea what a <code>NodeJoint</code> is and will not even ask about them.</p>
+</article>
